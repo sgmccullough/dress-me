@@ -36,7 +36,9 @@ export default function LayerList({ recommendation, activity }: Props) {
               <p
                 key={i}
                 className={`text-xs px-3 py-2 rounded-lg ${
-                  isWind ? "bg-yellow-50 text-yellow-700" : "bg-blue-50 text-blue-700"
+                  isWind
+                    ? "bg-yellow-50 text-yellow-700"
+                    : "bg-blue-50 text-blue-700"
                 }`}
               >
                 {note}

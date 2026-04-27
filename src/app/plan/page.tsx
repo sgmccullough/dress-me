@@ -26,7 +26,8 @@ export default function PlanPage() {
   const [planError, setPlanError] = useState<string | null>(null);
 
   const [conditions, setConditions] = useState<RouteConditions | null>(null);
-  const [recommendation, setRecommendation] = useState<WardrobeRecommendation | null>(null);
+  const [recommendation, setRecommendation] =
+    useState<WardrobeRecommendation | null>(null);
   const [selectedRouteName, setSelectedRouteName] = useState("");
 
   useEffect(() => {
@@ -57,7 +58,9 @@ export default function PlanPage() {
     setRecommendation(null);
 
     try {
-      const departureUnix = Math.floor(new Date(departureTime).getTime() / 1000);
+      const departureUnix = Math.floor(
+        new Date(departureTime).getTime() / 1000,
+      );
 
       const [streamsRes, wardrobeRes] = await Promise.all([
         fetch(`/api/strava/routes/${selectedRouteId}`),
@@ -67,24 +70,35 @@ export default function PlanPage() {
       if (!streamsRes.ok) throw new Error("Failed to fetch route streams");
 
       const streams = await streamsRes.json();
-      const wardrobe: ClothingItem[] = wardrobeRes.ok ? await wardrobeRes.json() : [];
+      const wardrobe: ClothingItem[] = wardrobeRes.ok
+        ? await wardrobeRes.json()
+        : [];
 
       const waypoints = sampleWaypoints(streams, departureUnix, 5);
 
       const forecastResults = await Promise.all(
         waypoints.map((wp) =>
-          fetch(`/api/weather/forecast?lat=${wp.lat}&lon=${wp.lon}&dt=${wp.estimatedArrivalUnix}`)
+          fetch(
+            `/api/weather/forecast?lat=${wp.lat}&lon=${wp.lon}&dt=${wp.estimatedArrivalUnix}`,
+          )
             .then((r) => r.json())
-            .then((weather) => ({
-              ...wp,
-              weather,
-            } as WaypointForecast))
-        )
+            .then(
+              (weather) =>
+                ({
+                  ...wp,
+                  weather,
+                }) as WaypointForecast,
+            ),
+        ),
       );
 
       const startElevFt = waypoints[0]?.elevationFt ?? 0;
       const worstCase = computeWorstCase(forecastResults, startElevFt);
-      const rec = getWardrobeRecommendation(worstCase, wardrobe, "cycling" as Activity);
+      const rec = getWardrobeRecommendation(
+        worstCase,
+        wardrobe,
+        "cycling" as Activity,
+      );
 
       setConditions(worstCase);
       setRecommendation(rec);
@@ -110,7 +124,9 @@ export default function PlanPage() {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-600 mb-4">Connect Strava to plan rides from your saved routes.</p>
+          <p className="text-gray-600 mb-4">
+            Connect Strava to plan rides from your saved routes.
+          </p>
           <a
             href="/api/auth/signin"
             className="inline-block px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
@@ -132,7 +148,9 @@ export default function PlanPage() {
         )}
 
         {routes.length === 0 && !stravaError ? (
-          <p className="text-sm text-gray-400">No saved routes found on Strava.</p>
+          <p className="text-sm text-gray-400">
+            No saved routes found on Strava.
+          </p>
         ) : (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
@@ -145,7 +163,8 @@ export default function PlanPage() {
                 <option value="">Choose a route...</option>
                 {routes.map((route) => (
                   <option key={route.id} value={route.id}>
-                    {route.name} — {(route.distance * METERS_TO_MILES).toFixed(1)} mi
+                    {route.name} —{" "}
+                    {(route.distance * METERS_TO_MILES).toFixed(1)} mi
                     {route.elevation_gain > 0
                       ? ` / +${Math.round(route.elevation_gain * METERS_TO_FEET)} ft`
                       : ""}
@@ -185,19 +204,27 @@ export default function PlanPage() {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-400 mb-1">Feels like</p>
-                  <p className="font-medium text-gray-800">{Math.round(conditions.worstFeelsLike)}°F</p>
+                  <p className="font-medium text-gray-800">
+                    {Math.round(conditions.worstFeelsLike)}°F
+                  </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-400 mb-1">Max wind</p>
-                  <p className="font-medium text-gray-800">{Math.round(conditions.maxWindSpeed)} mph</p>
+                  <p className="font-medium text-gray-800">
+                    {Math.round(conditions.maxWindSpeed)} mph
+                  </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-400 mb-1">Precipitation</p>
-                  <p className="font-medium text-gray-800">{conditions.hasPrecipitation ? "Yes" : "No"}</p>
+                  <p className="font-medium text-gray-800">
+                    {conditions.hasPrecipitation ? "Yes" : "No"}
+                  </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-400 mb-1">Elevation gain</p>
-                  <p className="font-medium text-gray-800">{Math.round(conditions.maxElevationGain)} ft</p>
+                  <p className="font-medium text-gray-800">
+                    {Math.round(conditions.maxElevationGain)} ft
+                  </p>
                 </div>
               </div>
             </div>
@@ -207,7 +234,8 @@ export default function PlanPage() {
                 Recommended layers
                 {recommendation.isGeneric && (
                   <span className="ml-2 text-orange-500 normal-case">
-                    (generic — add items to your wardrobe for personal recommendations)
+                    (generic — add items to your wardrobe for personal
+                    recommendations)
                   </span>
                 )}
               </p>
@@ -224,7 +252,10 @@ export default function PlanPage() {
               {recommendation.notes.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {recommendation.notes.map((note, i) => (
-                    <p key={i} className="text-xs px-3 py-2 rounded-lg bg-yellow-50 text-yellow-700">
+                    <p
+                      key={i}
+                      className="text-xs px-3 py-2 rounded-lg bg-yellow-50 text-yellow-700"
+                    >
                       {note}
                     </p>
                   ))}

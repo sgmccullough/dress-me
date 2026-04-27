@@ -3,7 +3,7 @@ import { getStravaToken } from "@/lib/strava";
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -15,7 +15,7 @@ export async function GET(
 
   const res = await fetch(
     `https://www.strava.com/api/v3/routes/${id}/streams`,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
+    { headers: { Authorization: `Bearer ${accessToken}` } },
   );
 
   if (!res.ok) {

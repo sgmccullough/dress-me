@@ -13,7 +13,7 @@ const LAPSE_RATE_F_PER_1000FT = 3.5;
 export function sampleWaypoints(
   streams: StravaStream[],
   departureUnix: number,
-  sampleCount = 5
+  sampleCount = 5,
 ): SampledWaypoint[] {
   const latlngStream = streams.find((s) => s.type === "latlng");
   const altStream = streams.find((s) => s.type === "altitude");
@@ -32,7 +32,7 @@ export function sampleWaypoints(
 
   const n = Math.max(3, sampleCount);
   const indices = Array.from({ length: n }, (_, i) =>
-    Math.round((i / (n - 1)) * (coords.length - 1))
+    Math.round((i / (n - 1)) * (coords.length - 1)),
   );
 
   return indices.map((idx) => {
@@ -53,7 +53,7 @@ export function applyLapseRate(tempF: number, elevationGainFt: number): number {
 
 export function computeWorstCase(
   waypoints: WaypointForecast[],
-  startElevationFt: number
+  startElevationFt: number,
 ): RouteConditions {
   let worstFeelsLike = Infinity;
   let worstTemp = Infinity;
@@ -68,7 +68,8 @@ export function computeWorstCase(
 
     if (adjustedFeelsLike < worstFeelsLike) worstFeelsLike = adjustedFeelsLike;
     if (adjustedTemp < worstTemp) worstTemp = adjustedTemp;
-    if (wp.weather.windSpeed > maxWindSpeed) maxWindSpeed = wp.weather.windSpeed;
+    if (wp.weather.windSpeed > maxWindSpeed)
+      maxWindSpeed = wp.weather.windSpeed;
     if (wp.weather.conditionId >= 200 && wp.weather.conditionId <= 622) {
       hasPrecipitation = true;
     }

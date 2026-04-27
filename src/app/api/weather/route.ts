@@ -6,7 +6,10 @@ const BASE = "https://api.openweathermap.org";
 export async function GET(request: NextRequest) {
   const apiKey = process.env.OPENWEATHERMAP_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    return NextResponse.json(
+      { error: "API key not configured" },
+      { status: 500 },
+    );
   }
 
   const { searchParams } = request.nextUrl;
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     if (city) {
       const geoRes = await fetch(
-        `${BASE}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${apiKey}`
+        `${BASE}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${apiKey}`,
       );
       const geoData = await geoRes.json();
       if (!Array.isArray(geoData) || geoData.length === 0) {
@@ -28,14 +31,20 @@ export async function GET(request: NextRequest) {
     }
 
     if (!lat || !lon) {
-      return NextResponse.json({ error: "lat/lon or city required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "lat/lon or city required" },
+        { status: 400 },
+      );
     }
 
     const weatherRes = await fetch(
-      `${BASE}/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`
+      `${BASE}/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`,
     );
     if (!weatherRes.ok) {
-      return NextResponse.json({ error: "Weather fetch failed" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Weather fetch failed" },
+        { status: 500 },
+      );
     }
     const raw = await weatherRes.json();
 
@@ -50,6 +59,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch {
-    return NextResponse.json({ error: "Weather fetch failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Weather fetch failed" },
+      { status: 500 },
+    );
   }
 }

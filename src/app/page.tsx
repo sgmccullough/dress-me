@@ -17,7 +17,9 @@ export default function Home() {
   const [weatherError, setWeatherError] = useState<string | null>(null);
   const [showCitySearch, setShowCitySearch] = useState(false);
 
-  async function fetchWeather(params: { lat: number; lon: number } | { city: string }) {
+  async function fetchWeather(
+    params: { lat: number; lon: number } | { city: string },
+  ) {
     setLoadingWeather(true);
     setWeatherError(null);
 
@@ -58,17 +60,20 @@ export default function Home() {
     }
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        fetchWeather({ lat: position.coords.latitude, lon: position.coords.longitude });
+        fetchWeather({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
       },
       () => {
         setWeatherError("Location access denied");
-      }
+      },
     );
   }
 
   const recommendation = useMemo(
     () => (weather ? getLayerRecommendation(weather, activity) : null),
-    [weather, activity]
+    [weather, activity],
   );
 
   const isInitialLoading = geo.loading || (loadingWeather && !weather);
@@ -99,9 +104,13 @@ export default function Home() {
 
         {!geo.loading && (showCitySearch || weatherError) && (
           <div className="flex flex-col items-center gap-3 w-full">
-            {weatherError && <p className="text-sm text-red-500">{weatherError}</p>}
+            {weatherError && (
+              <p className="text-sm text-red-500">{weatherError}</p>
+            )}
             {!weatherError && !weather && (
-              <p className="text-sm text-gray-500">Enter your city to get started</p>
+              <p className="text-sm text-gray-500">
+                Enter your city to get started
+              </p>
             )}
             <CitySearch
               onSearch={(city) => fetchWeather({ city })}

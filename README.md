@@ -53,6 +53,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Wardrobe (`/wardrobe`)
 
 Add your actual gear. Each item has:
+
 - **Name** — e.g. "Patagonia Nano Puff"
 - **Type** — Base Layer, Mid Layer, Outer Layer, Bottoms, or Accessories
 - **Activities** — Running, Cycling, or both

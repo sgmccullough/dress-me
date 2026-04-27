@@ -9,7 +9,9 @@ interface GeolocationResult {
 }
 
 export function useGeolocation(): GeolocationResult {
-  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,13 +24,16 @@ export function useGeolocation(): GeolocationResult {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setCoords({ lat: position.coords.latitude, lon: position.coords.longitude });
+        setCoords({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
         setLoading(false);
       },
       () => {
         setError("Location access denied");
         setLoading(false);
-      }
+      },
     );
   }, []);
 

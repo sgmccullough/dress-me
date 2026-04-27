@@ -7,6 +7,7 @@ Personal weather-based clothing layer recommender. Single-user app. Next.js 16 +
 ## Critical: breaking-change stack
 
 ### Prisma 7
+
 - Connection URL is NOT in `schema.prisma`. It lives in `prisma.config.ts` and is loaded via dotenv.
 - `PrismaClient` requires a driver adapter — no bare `new PrismaClient()`. For SQLite, use `@prisma/adapter-better-sqlite3` with `{ url: dbPath }` (not a `Database` instance).
 - See `src/lib/prisma.ts` for the singleton pattern.
@@ -14,11 +15,13 @@ Personal weather-based clothing layer recommender. Single-user app. Next.js 16 +
 - Run `npx prisma migrate dev` to apply schema changes. Run `npx prisma generate` after.
 
 ### Next.js 16
+
 - Middleware is `src/proxy.ts`, not `src/middleware.ts`. Same API, different filename.
 - `params` in route handlers is a `Promise` — always `await params` before destructuring.
 - Read `node_modules/next/dist/docs/` before making routing or middleware changes.
 
 ### Auth.js v5 (next-auth@beta)
+
 - Import from `next-auth`, `next-auth/providers/strava`, `@auth/prisma-adapter`.
 - `signIn` and `signOut` are called from Server Actions (inline `"use server"` functions).
 - `session.user.id` is not exposed by default — the session callback in `src/lib/auth.ts` adds it explicitly.
@@ -73,6 +76,7 @@ src/
 ## Env vars
 
 All in `.env.local`:
+
 ```
 DATABASE_URL=file:./prisma/dev.db
 AUTH_SECRET=...

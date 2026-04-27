@@ -11,7 +11,7 @@ export async function GET() {
 
   const res = await fetch(
     `https://www.strava.com/api/v3/athletes/${athleteId}/routes?per_page=30`,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
+    { headers: { Authorization: `Bearer ${accessToken}` } },
   );
 
   if (!res.ok) {

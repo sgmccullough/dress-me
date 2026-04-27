@@ -18,7 +18,10 @@ export async function getStravaToken(userId: string): Promise<StravaToken> {
   const isExpired = account.expires_at != null && account.expires_at < nowSec;
 
   if (!isExpired) {
-    return { accessToken: account.access_token, athleteId: account.providerAccountId };
+    return {
+      accessToken: account.access_token,
+      athleteId: account.providerAccountId,
+    };
   }
 
   if (!account.refresh_token) {
@@ -49,5 +52,8 @@ export async function getStravaToken(userId: string): Promise<StravaToken> {
     },
   });
 
-  return { accessToken: refreshed.access_token, athleteId: account.providerAccountId };
+  return {
+    accessToken: refreshed.access_token,
+    athleteId: account.providerAccountId,
+  };
 }

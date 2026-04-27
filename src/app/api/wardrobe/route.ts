@@ -4,7 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { ClothingItemType, Activity } from "@/lib/types";
 
 const VALID_TYPES: ClothingItemType[] = [
-  "BASE_LAYER", "MID_LAYER", "OUTER_LAYER", "BOTTOMS", "ACCESSORIES",
+  "BASE_LAYER",
+  "MID_LAYER",
+  "OUTER_LAYER",
+  "BOTTOMS",
+  "ACCESSORIES",
 ];
 const VALID_ACTIVITIES: Activity[] = ["running", "cycling"];
 
@@ -20,7 +24,10 @@ export async function GET() {
   });
 
   return Response.json(
-    items.map((item) => ({ ...item, activities: JSON.parse(item.activities) as Activity[] }))
+    items.map((item) => ({
+      ...item,
+      activities: JSON.parse(item.activities) as Activity[],
+    })),
   );
 }
 
@@ -31,7 +38,16 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, type, activities, minTemp, maxTemp, isWindproof, isWaterproof, notes } = body;
+  const {
+    name,
+    type,
+    activities,
+    minTemp,
+    maxTemp,
+    isWindproof,
+    isWaterproof,
+    notes,
+  } = body;
 
   if (
     !name ||

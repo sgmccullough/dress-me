@@ -22,12 +22,15 @@ export async function GET(request: NextRequest) {
   const dt = searchParams.get("dt");
 
   if (!lat || !lon || !dt) {
-    return Response.json({ error: "lat, lon, and dt required" }, { status: 400 });
+    return Response.json(
+      { error: "lat, lon, and dt required" },
+      { status: 400 },
+    );
   }
 
   try {
     const res = await fetch(
-      `${BASE}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`
+      `${BASE}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`,
     );
     if (!res.ok) {
       return Response.json({ error: "Forecast fetch failed" }, { status: 500 });
@@ -37,7 +40,9 @@ export async function GET(request: NextRequest) {
     const targetTs = Number(dt);
 
     const closest = (data.list as OWMForecastEntry[]).reduce((best, entry) =>
-      Math.abs(entry.dt - targetTs) < Math.abs(best.dt - targetTs) ? entry : best
+      Math.abs(entry.dt - targetTs) < Math.abs(best.dt - targetTs)
+        ? entry
+        : best,
     );
 
     const weather: WeatherData = {

@@ -11,19 +11,42 @@ import {
 type TempBand = "arctic" | "cold" | "cool" | "mild" | "warm";
 
 const runningLayers: Record<TempBand, string[]> = {
-  arctic: ["Thermal base layer", "Wind-resistant jacket", "Running tights", "Gloves", "Hat or ear warmers"],
-  cold:   ["Long-sleeve moisture-wicking top", "Light jacket", "Running tights", "Light gloves"],
-  cool:   ["Long-sleeve tech tee", "Shorts or capris"],
-  mild:   ["Short-sleeve tech tee", "Shorts"],
-  warm:   ["Tank or short-sleeve tee", "Shorts", "Sunscreen / sun protection"],
+  arctic: [
+    "Thermal base layer",
+    "Wind-resistant jacket",
+    "Running tights",
+    "Gloves",
+    "Hat or ear warmers",
+  ],
+  cold: [
+    "Long-sleeve moisture-wicking top",
+    "Light jacket",
+    "Running tights",
+    "Light gloves",
+  ],
+  cool: ["Long-sleeve tech tee", "Shorts or capris"],
+  mild: ["Short-sleeve tech tee", "Shorts"],
+  warm: ["Tank or short-sleeve tee", "Shorts", "Sunscreen / sun protection"],
 };
 
 const cyclingLayers: Record<TempBand, string[]> = {
-  arctic: ["Thermal base layer", "Insulated cycling jacket", "Bib tights", "Shoe covers", "Full-finger gloves", "Helmet liner"],
-  cold:   ["Long-sleeve base layer", "Cycling jacket", "Bib tights", "Light gloves"],
-  cool:   ["Short-sleeve jersey", "Arm warmers", "Bib shorts or knickers"],
-  mild:   ["Short-sleeve jersey", "Bib shorts"],
-  warm:   ["Short-sleeve jersey", "Shorts", "Sunscreen / sun protection"],
+  arctic: [
+    "Thermal base layer",
+    "Insulated cycling jacket",
+    "Bib tights",
+    "Shoe covers",
+    "Full-finger gloves",
+    "Helmet liner",
+  ],
+  cold: [
+    "Long-sleeve base layer",
+    "Cycling jacket",
+    "Bib tights",
+    "Light gloves",
+  ],
+  cool: ["Short-sleeve jersey", "Arm warmers", "Bib shorts or knickers"],
+  mild: ["Short-sleeve jersey", "Bib shorts"],
+  warm: ["Short-sleeve jersey", "Shorts", "Sunscreen / sun protection"],
 };
 
 const coolNotes: Record<Activity, string> = {
@@ -49,7 +72,7 @@ function hasJacket(layers: string[]): boolean {
 
 export function getLayerRecommendation(
   weather: WeatherData,
-  activity: Activity
+  activity: Activity,
 ): LayerRecommendation {
   const band = getTempBand(weather.temp);
   const baseLayers = activity === "running" ? runningLayers : cyclingLayers;
@@ -62,7 +85,9 @@ export function getLayerRecommendation(
 
   if (weather.windSpeed > 15) {
     const windLayer =
-      activity === "running" ? "Wind-resistant outer layer" : "Windproof cycling gilet";
+      activity === "running"
+        ? "Wind-resistant outer layer"
+        : "Windproof cycling gilet";
     if (!layers.includes(windLayer)) {
       layers.push(windLayer);
     }
@@ -88,7 +113,7 @@ const typeOrder: ClothingItemType[] = [
 export function getWardrobeRecommendation(
   conditions: RouteConditions,
   wardrobe: ClothingItem[],
-  activity: Activity
+  activity: Activity,
 ): WardrobeRecommendation {
   if (wardrobe.length === 0) {
     const syntheticWeather: WeatherData = {
@@ -116,7 +141,7 @@ export function getWardrobeRecommendation(
         item.type === type &&
         item.activities.includes(activity) &&
         conditions.worstFeelsLike >= item.minTemp &&
-        conditions.worstFeelsLike <= item.maxTemp
+        conditions.worstFeelsLike <= item.maxTemp,
     );
 
     if (candidates.length === 0) continue;
@@ -137,7 +162,7 @@ export function getWardrobeRecommendation(
     const hasWindproof = selectedLayers.some((l) => l.item.isWindproof);
     if (!hasWindproof) {
       notes.push(
-        `Wind protection needed (${Math.round(conditions.maxWindSpeed)} mph) — no windproof item in wardrobe matches these conditions`
+        `Wind protection needed (${Math.round(conditions.maxWindSpeed)} mph) — no windproof item in wardrobe matches these conditions`,
       );
     }
   }
@@ -146,7 +171,7 @@ export function getWardrobeRecommendation(
     const hasWaterproof = selectedLayers.some((l) => l.item.isWaterproof);
     if (!hasWaterproof) {
       notes.push(
-        "Rain expected — no waterproof item in wardrobe matches these conditions"
+        "Rain expected — no waterproof item in wardrobe matches these conditions",
       );
     }
   }

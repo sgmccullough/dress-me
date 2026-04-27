@@ -61,7 +61,9 @@ export default function WardrobePage() {
     setLoading(false);
   }
 
-  useEffect(() => { loadItems(); }, []);
+  useEffect(() => {
+    loadItems();
+  }, []);
 
   function startAdd() {
     setForm(defaultForm);
@@ -177,7 +179,9 @@ export default function WardrobePage() {
                 required
                 type="text"
                 value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, name: e.target.value }))
+                }
                 placeholder="e.g. Patagonia Nano Puff"
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -187,11 +191,18 @@ export default function WardrobePage() {
               <label className="text-xs text-gray-500">Type</label>
               <select
                 value={form.type}
-                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as ClothingItemType }))}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    type: e.target.value as ClothingItemType,
+                  }))
+                }
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {CLOTHING_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -200,7 +211,10 @@ export default function WardrobePage() {
               <label className="text-xs text-gray-500">Activities</label>
               <div className="flex gap-3">
                 {ACTIVITIES.map((a) => (
-                  <label key={a.value} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
+                  <label
+                    key={a.value}
+                    className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       checked={form.activities.includes(a.value)}
@@ -219,7 +233,9 @@ export default function WardrobePage() {
                 <input
                   type="number"
                   value={form.minTemp}
-                  onChange={(e) => setForm((f) => ({ ...f, minTemp: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, minTemp: e.target.value }))
+                  }
                   className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -228,7 +244,9 @@ export default function WardrobePage() {
                 <input
                   type="number"
                   value={form.maxTemp}
-                  onChange={(e) => setForm((f) => ({ ...f, maxTemp: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, maxTemp: e.target.value }))
+                  }
                   className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -239,7 +257,9 @@ export default function WardrobePage() {
                 <input
                   type="checkbox"
                   checked={form.isWindproof}
-                  onChange={(e) => setForm((f) => ({ ...f, isWindproof: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, isWindproof: e.target.checked }))
+                  }
                   className="rounded"
                 />
                 Windproof
@@ -248,7 +268,9 @@ export default function WardrobePage() {
                 <input
                   type="checkbox"
                   checked={form.isWaterproof}
-                  onChange={(e) => setForm((f) => ({ ...f, isWaterproof: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, isWaterproof: e.target.checked }))
+                  }
                   className="rounded"
                 />
                 Waterproof
@@ -259,7 +281,9 @@ export default function WardrobePage() {
               <label className="text-xs text-gray-500">Notes (optional)</label>
               <textarea
                 value={form.notes}
-                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, notes: e.target.value }))
+                }
                 rows={2}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
@@ -273,7 +297,11 @@ export default function WardrobePage() {
                 disabled={saving}
                 className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
-                {saving ? "Saving..." : editingId ? "Save changes" : "Add to wardrobe"}
+                {saving
+                  ? "Saving..."
+                  : editingId
+                    ? "Save changes"
+                    : "Add to wardrobe"}
               </button>
               <button
                 type="button"
@@ -303,7 +331,9 @@ export default function WardrobePage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {item.name}
+                    </p>
                     <p className="text-xs text-gray-400 mt-0.5">
                       {item.minTemp}–{item.maxTemp}°F &middot;{" "}
                       {item.activities.join(", ")}
@@ -315,10 +345,14 @@ export default function WardrobePage() {
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {item.isWindproof && (
-                    <span className="text-xs bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full">Windproof</span>
+                    <span className="text-xs bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full">
+                      Windproof
+                    </span>
                   )}
                   {item.isWaterproof && (
-                    <span className="text-xs bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">Waterproof</span>
+                    <span className="text-xs bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">
+                      Waterproof
+                    </span>
                   )}
                 </div>
                 {item.notes && (
