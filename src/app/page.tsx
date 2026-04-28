@@ -15,7 +15,10 @@ export default function Home() {
   const [activity, setActivity] = useState<Activity>("running");
   const [loadingWeather, setLoadingWeather] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
-  const [showCitySearch, setShowCitySearch] = useState(false);
+  const [userShowsCitySearch, setUserShowsCitySearch] = useState(false);
+
+  const showCitySearch =
+    userShowsCitySearch || (!geo.loading && !geo.coords && !weather);
 
   async function fetchWeather(
     params: { lat: number; lon: number } | { city: string },
@@ -35,7 +38,7 @@ export default function Home() {
         setWeatherError(data.error ?? "Failed to load weather");
       } else {
         setWeather(data);
-        setShowCitySearch(false);
+        setUserShowsCitySearch(false);
       }
     } catch {
       setWeatherError("Failed to load weather");
@@ -45,13 +48,26 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (geo.loading) return;
-    if (geo.coords) {
-      fetchWeather(geo.coords);
-    } else {
-      setShowCitySearch(true);
-    }
-  }, [geo.loading, geo.coords, geo.error]);
+    if (geo.loading || !geo.coords) return;
+    const { lat, lon } = geo.coords;
+    let cancelled = false;
+
+    fetch(`/api/weather?lat=${lat}&lon=${lon}`)
+      .then((res) =>
+        res.ok ? res.json() : res.json().then((d) => Promise.reject(d)),
+      )
+      .then((data) => {
+        if (!cancelled) setWeather(data);
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setWeatherError(err?.error ?? "Failed to load weather");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [geo.loading, geo.coords]);
 
   function handleGeolocate() {
     if (!navigator.geolocation) {
@@ -65,8 +81,14 @@ export default function Home() {
           lon: position.coords.longitude,
         });
       },
-      () => {
-        setWeatherError("Location access denied");
+      (err) => {
+        if (err.code === GeolocationPositionError.PERMISSION_DENIED) {
+          setWeatherError(
+            "Location blocked — click the lock icon in your browser's address bar and allow location, then try again.",
+          );
+        } else {
+          setWeatherError("Could not get your location. Try searching by city.");
+        }
       },
     );
   }
@@ -76,7 +98,9 @@ export default function Home() {
     [weather, activity],
   );
 
-  const isInitialLoading = geo.loading || (loadingWeather && !weather);
+  const geoFetchLoading =
+    !geo.loading && !!geo.coords && !weather && !weatherError;
+  const isInitialLoading = geo.loading || loadingWeather || geoFetchLoading;
 
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-12">
@@ -126,7 +150,7 @@ export default function Home() {
             <ActivityToggle activity={activity} onChange={setActivity} />
             <LayerList recommendation={recommendation} activity={activity} />
             <button
-              onClick={() => setShowCitySearch((prev) => !prev)}
+              onClick={() => setUserShowsCitySearch((prev) => !prev)}
               className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
               {showCitySearch ? "Cancel" : "Change location"}

@@ -17,8 +17,10 @@ export function useGeolocation(): GeolocationResult {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setError("Geolocation not supported by this browser");
-      setLoading(false);
+      Promise.resolve().then(() => {
+        setError("Geolocation not supported by this browser");
+        setLoading(false);
+      });
       return;
     }
 
@@ -30,8 +32,12 @@ export function useGeolocation(): GeolocationResult {
         });
         setLoading(false);
       },
-      () => {
-        setError("Location access denied");
+      (err) => {
+        setError(
+          err.code === GeolocationPositionError.PERMISSION_DENIED
+            ? "Location blocked — click the lock icon in your browser's address bar and allow location, then try again."
+            : "Could not get your location. Try searching by city.",
+        );
         setLoading(false);
       },
     );

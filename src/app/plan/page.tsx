@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   ClothingItem,
   StravaRoute,
@@ -127,12 +128,12 @@ export default function PlanPage() {
           <p className="text-gray-600 mb-4">
             Connect Strava to plan rides from your saved routes.
           </p>
-          <a
+          <Link
             href="/api/auth/signin"
             className="inline-block px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
           >
             Connect Strava
-          </a>
+          </Link>
         </div>
       </main>
     );

@@ -57,6 +57,31 @@ export interface StravaRoute {
   type: number;
 }
 
+export interface StravaActivity {
+  id: number;
+  name: string;
+  type: string;
+  sport_type: string;
+  start_date: string;
+  distance: number;
+  total_elevation_gain: number;
+  average_temp?: number;
+  moving_time: number;
+}
+
+export interface ActivityLog {
+  id: string;
+  userId: string;
+  stravaActivityId: string;
+  activityName: string;
+  activityDate: string;
+  temperature?: number | null;
+  feelsLike?: number | null;
+  windSpeed?: number | null;
+  items: ClothingItem[];
+  createdAt: string;
+}
+
 export interface WaypointForecast {
   lat: number;
   lon: number;

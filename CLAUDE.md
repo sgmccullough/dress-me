@@ -87,6 +87,21 @@ OPENWEATHERMAP_API_KEY=...
 
 `DATABASE_URL` also lives in `.env` so the Prisma CLI (via dotenv in `prisma.config.ts`) can read it without `.env.local`. Both files must use the same path (`file:./prisma/dev.db`) — if they diverge, the CLI migrates a different file than the app reads, and the tables won't exist at runtime.
 
+## Testing
+
+Tests use **Vitest** and live alongside source files as `*.test.ts`.
+
+```bash
+npm test               # run all tests once
+npm run test:watch     # watch mode
+npm run test:coverage  # coverage report
+```
+
+**Test patterns:**
+- Pure lib functions (`layering.ts`, `routePlanning.ts`): test directly, no mocks needed.
+- API route handlers: mock `@/lib/auth` and `@/lib/prisma` via `vi.mock`. Construct `NextRequest` with the standard constructor. Mock global `fetch` with `vi.stubGlobal('fetch', vi.fn())` and restore with `vi.unstubAllGlobals()` in `afterEach`. Call `vi.clearAllMocks()` in `beforeEach` to reset call counts.
+- Always write tests alongside any new code.
+
 ## Common tasks
 
 ```bash

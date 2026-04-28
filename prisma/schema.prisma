@@ -15,6 +15,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   wardrobeItems ClothingItem[]
+  activityLogs  ActivityLog[]
 }
 
 model Account {
@@ -52,17 +53,44 @@ model VerificationToken {
 }
 
 model ClothingItem {
-  id           String   @id @default(cuid())
-  userId       String
-  name         String
-  type         String
-  activities   String
-  minTemp      Float
-  maxTemp      Float
-  isWindproof  Boolean  @default(false)
-  isWaterproof Boolean  @default(false)
-  notes        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String            @id @default(cuid())
+  userId           String
+  name             String
+  type             String
+  activities       String
+  minTemp          Float
+  maxTemp          Float
+  isWindproof      Boolean           @default(false)
+  isWaterproof     Boolean           @default(false)
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityLogItems ActivityLogItem[]
+}
+
+model ActivityLog {
+  id               String            @id @default(cuid())
+  userId           String
+  stravaActivityId String
+  activityName     String
+  activityDate     DateTime
+  temperature      Float?
+  feelsLike        Float?
+  windSpeed        Float?
+  items            ActivityLogItem[]
+  createdAt        DateTime          @default(now())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stravaActivityId])
+}
+
+model ActivityLogItem {
+  id             String      @id @default(cuid())
+  activityLogId  String
+  clothingItemId String
+  activityLog    ActivityLog @relation(fields: [activityLogId], references: [id], onDelete: Cascade)
+  clothingItem   ClothingItem @relation(fields: [clothingItemId], references: [id], onDelete: Cascade)
+
+  @@unique([activityLogId, clothingItemId])
 }

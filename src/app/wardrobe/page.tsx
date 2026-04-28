@@ -62,7 +62,12 @@ export default function WardrobePage() {
   }
 
   useEffect(() => {
-    loadItems();
+    fetch("/api/wardrobe")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setItems(data);
+        setLoading(false);
+      });
   }, []);
 
   function startAdd() {

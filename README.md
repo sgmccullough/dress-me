@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Home
 
 - Auto-detects your location via browser geolocation
-- Falls back to city name search if location is denied
+- If location is blocked, shows instructions to re-enable it (click the lock icon in your browser's address bar → allow Location), then falls back to city name search
 - Toggle between Running and Cycling — layer list updates instantly
 - "Change location" lets you switch cities without losing the current display
 
@@ -74,6 +74,22 @@ Requires Strava to be connected (click "Connect Strava" in the nav).
 The app samples 5 points along the route, fetches the weather forecast for each at your estimated arrival time (assumes ~14 mph avg speed), applies elevation lapse rate adjustments (~3.5°F per 1000ft gain), and recommends layers against the worst-case conditions across the whole route.
 
 Note: OWM's free forecast only covers 5 days out. Departures further than 5 days will use the furthest available forecast data.
+
+---
+
+## Testing
+
+```bash
+npm test               # run all tests once
+npm run test:watch     # watch mode
+npm run test:coverage  # run with coverage report
+```
+
+Tests live alongside source files as `*.test.ts`. The suite covers:
+
+- `src/lib/layering.ts` — temperature band logic, wind/rain layer insertion, wardrobe selection
+- `src/lib/routePlanning.ts` — lapse rate math, waypoint sampling, worst-case conditions
+- All API route handlers — auth guards, input validation, database interactions, external fetch calls
 
 ---
 
