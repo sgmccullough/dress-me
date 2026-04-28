@@ -2,8 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
-import { getLayerRecommendation } from "@/lib/layering";
-import { Activity, WeatherData } from "@/lib/types";
+import { getWardrobeRecommendation } from "@/lib/layering";
+import {
+  Activity,
+  ClothingItem,
+  RouteConditions,
+  WeatherData,
+} from "@/lib/types";
 import ActivityToggle from "@/components/ActivityToggle";
 import CitySearch from "@/components/CitySearch";
 import LayerList from "@/components/LayerList";
@@ -12,13 +17,20 @@ import WeatherDisplay from "@/components/WeatherDisplay";
 export default function Home() {
   const geo = useGeolocation();
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [activity, setActivity] = useState<Activity>("running");
+  const [activity, setActivity] = useState<Activity>("cycling");
+  const [wardrobe, setWardrobe] = useState<ClothingItem[]>([]);
   const [loadingWeather, setLoadingWeather] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
   const [userShowsCitySearch, setUserShowsCitySearch] = useState(false);
 
   const showCitySearch =
     userShowsCitySearch || (!geo.loading && !geo.coords && !weather);
+
+  useEffect(() => {
+    fetch("/api/wardrobe")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setWardrobe(Array.isArray(data) ? data : []));
+  }, []);
 
   async function fetchWeather(
     params: { lat: number; lon: number } | { city: string },
@@ -60,8 +72,7 @@ export default function Home() {
         if (!cancelled) setWeather(data);
       })
       .catch((err) => {
-        if (!cancelled)
-          setWeatherError(err?.error ?? "Failed to load weather");
+        if (!cancelled) setWeatherError(err?.error ?? "Failed to load weather");
       });
 
     return () => {
@@ -87,15 +98,35 @@ export default function Home() {
             "Location blocked — click the lock icon in your browser's address bar and allow location, then try again.",
           );
         } else {
-          setWeatherError("Could not get your location. Try searching by city.");
+          setWeatherError(
+            "Could not get your location. Try searching by city.",
+          );
         }
       },
     );
   }
 
-  const recommendation = useMemo(
-    () => (weather ? getLayerRecommendation(weather, activity) : null),
-    [weather, activity],
+  const recommendation = useMemo(() => {
+    if (!weather) return null;
+    const conditions: RouteConditions = {
+      worstTemp: weather.temp,
+      worstFeelsLike: weather.feelsLike,
+      maxWindSpeed: weather.windSpeed,
+      hasPrecipitation: weather.conditionId >= 200 && weather.conditionId <= 622,
+      maxElevationGain: 0,
+    };
+    return getWardrobeRecommendation(conditions, wardrobe, activity);
+  }, [weather, wardrobe, activity]);
+
+  const layerRec = useMemo(
+    () =>
+      recommendation
+        ? {
+            layers: recommendation.layers.map((l) => l.name),
+            notes: recommendation.notes,
+          }
+        : null,
+    [recommendation],
   );
 
   const geoFetchLoading =
@@ -144,11 +175,20 @@ export default function Home() {
           </div>
         )}
 
-        {!isInitialLoading && weather && recommendation && (
+        {!isInitialLoading && weather && layerRec && (
           <>
             <WeatherDisplay weather={weather} />
             <ActivityToggle activity={activity} onChange={setActivity} />
-            <LayerList recommendation={recommendation} activity={activity} />
+            <LayerList recommendation={layerRec} activity={activity} />
+            {recommendation?.isGeneric && (
+              <p className="text-xs text-gray-400 text-center">
+                Add{" "}
+                <a href="/wardrobe" className="underline hover:text-gray-600">
+                  wardrobe items
+                </a>{" "}
+                for personalized recommendations.
+              </p>
+            )}
             <button
               onClick={() => setUserShowsCitySearch((prev) => !prev)}
               className="text-xs text-gray-400 hover:text-gray-600 transition-colors"

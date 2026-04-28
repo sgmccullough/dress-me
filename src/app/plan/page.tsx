@@ -21,7 +21,7 @@ export default function PlanPage() {
   const [routesLoading, setRoutesLoading] = useState(true);
   const [stravaError, setStravaError] = useState<string | null>(null);
 
-  const [selectedRouteId, setSelectedRouteId] = useState<number | null>(null);
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [departureTime, setDepartureTime] = useState<string>("");
   const [planning, setPlanning] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
@@ -158,7 +158,7 @@ export default function PlanPage() {
               <label className="text-xs text-gray-500">Select a route</label>
               <select
                 value={selectedRouteId ?? ""}
-                onChange={(e) => setSelectedRouteId(Number(e.target.value))}
+                onChange={(e) => setSelectedRouteId(e.target.value || null)}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Choose a route...</option>

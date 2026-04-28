@@ -39,14 +39,32 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { stravaActivityId, activityName, activityDate, clothingItemIds, temperature, feelsLike, windSpeed } = body;
+  const {
+    stravaActivityId,
+    activityName,
+    activityDate,
+    clothingItemIds,
+    temperature,
+    feelsLike,
+    windSpeed,
+  } = body;
 
-  if (!stravaActivityId || !activityName || !activityDate || !Array.isArray(clothingItemIds)) {
+  if (
+    !stravaActivityId ||
+    !activityName ||
+    !activityDate ||
+    !Array.isArray(clothingItemIds)
+  ) {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   const log = await prisma.activityLog.upsert({
-    where: { userId_stravaActivityId: { userId: session.user.id, stravaActivityId: String(stravaActivityId) } },
+    where: {
+      userId_stravaActivityId: {
+        userId: session.user.id,
+        stravaActivityId: String(stravaActivityId),
+      },
+    },
     create: {
       userId: session.user.id,
       stravaActivityId: String(stravaActivityId),

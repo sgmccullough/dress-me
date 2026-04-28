@@ -54,14 +54,18 @@ describe("PUT /api/wardrobe/[id]", () => {
 
   it("returns 401 when not authenticated", async () => {
     mockAuth.mockResolvedValue(null);
-    const res = await PUT(makeRequest("PUT", { name: "Updated" }), { params: PARAMS });
+    const res = await PUT(makeRequest("PUT", { name: "Updated" }), {
+      params: PARAMS,
+    });
     expect(res.status).toBe(401);
   });
 
   it("returns 404 when item does not belong to user", async () => {
     mockAuth.mockResolvedValue(AUTHED_SESSION);
     mockFindFirst.mockResolvedValue(null);
-    const res = await PUT(makeRequest("PUT", { name: "Updated" }), { params: PARAMS });
+    const res = await PUT(makeRequest("PUT", { name: "Updated" }), {
+      params: PARAMS,
+    });
     expect(res.status).toBe(404);
   });
 
@@ -70,7 +74,9 @@ describe("PUT /api/wardrobe/[id]", () => {
     mockFindFirst.mockResolvedValue(DB_ITEM);
     mockUpdate.mockResolvedValue({ ...DB_ITEM, name: "Updated" });
 
-    const res = await PUT(makeRequest("PUT", { name: "Updated" }), { params: PARAMS });
+    const res = await PUT(makeRequest("PUT", { name: "Updated" }), {
+      params: PARAMS,
+    });
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.name).toBe("Updated");
@@ -80,12 +86,14 @@ describe("PUT /api/wardrobe/[id]", () => {
   it("JSON-stringifies activities on update when provided", async () => {
     mockAuth.mockResolvedValue(AUTHED_SESSION);
     mockFindFirst.mockResolvedValue(DB_ITEM);
-    mockUpdate.mockResolvedValue({ ...DB_ITEM, activities: '["running","cycling"]' });
+    mockUpdate.mockResolvedValue({
+      ...DB_ITEM,
+      activities: '["running","cycling"]',
+    });
 
-    await PUT(
-      makeRequest("PUT", { activities: ["running", "cycling"] }),
-      { params: PARAMS },
-    );
+    await PUT(makeRequest("PUT", { activities: ["running", "cycling"] }), {
+      params: PARAMS,
+    });
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

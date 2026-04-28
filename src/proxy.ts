@@ -7,5 +7,9 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/api/wardrobe/:path*", "/api/strava/:path*", "/api/activity-logs/:path*"],
+  matcher: [
+    "/api/wardrobe/:path*",
+    "/api/strava/:path*",
+    "/api/activity-logs/:path*",
+  ],
 };

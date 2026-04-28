@@ -84,9 +84,7 @@ describe("GET /api/weather", () => {
   });
 
   it("returns 500 when weather fetch fails", async () => {
-    mockFetch.mockResolvedValue(
-      new Response("error", { status: 500 }),
-    );
+    mockFetch.mockResolvedValue(new Response("error", { status: 500 }));
 
     const res = await GET(makeRequest({ lat: "40", lon: "-74" }));
     expect(res.status).toBe(500);

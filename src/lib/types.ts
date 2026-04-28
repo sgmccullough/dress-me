@@ -49,7 +49,7 @@ export interface WardrobeRecommendation {
 }
 
 export interface StravaRoute {
-  id: number;
+  id: string;
   name: string;
   distance: number;
   elevation_gain: number;

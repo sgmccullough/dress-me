@@ -18,5 +18,9 @@ export async function GET() {
     return Response.json({ error: "Strava request failed" }, { status: 502 });
   }
 
-  return Response.json(await res.json());
+  // Strava route IDs are 64-bit integers that exceed Number.MAX_SAFE_INTEGER.
+  // JSON.parse loses precision for these; quote them as strings before parsing.
+  const text = await res.text();
+  const safe = text.replace(/"id":(\d{16,})/g, '"id":"$1"');
+  return new Response(safe, { headers: { "Content-Type": "application/json" } });
 }

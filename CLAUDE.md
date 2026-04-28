@@ -98,6 +98,7 @@ npm run test:coverage  # coverage report
 ```
 
 **Test patterns:**
+
 - Pure lib functions (`layering.ts`, `routePlanning.ts`): test directly, no mocks needed.
 - API route handlers: mock `@/lib/auth` and `@/lib/prisma` via `vi.mock`. Construct `NextRequest` with the standard constructor. Mock global `fetch` with `vi.stubGlobal('fetch', vi.fn())` and restore with `vi.unstubAllGlobals()` in `afterEach`. Call `vi.clearAllMocks()` in `beforeEach` to reset call counts.
 - Always write tests alongside any new code.

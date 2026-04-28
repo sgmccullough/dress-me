@@ -14,7 +14,9 @@ function makeWeather(overrides: Partial<WeatherData> = {}): WeatherData {
   };
 }
 
-function makeConditions(overrides: Partial<RouteConditions> = {}): RouteConditions {
+function makeConditions(
+  overrides: Partial<RouteConditions> = {},
+): RouteConditions {
   return {
     worstTemp: 60,
     worstFeelsLike: 58,
@@ -43,37 +45,55 @@ function makeItem(overrides: Partial<ClothingItem> = {}): ClothingItem {
 describe("getLayerRecommendation", () => {
   describe("temperature bands", () => {
     it("returns arctic layers for temp < 32", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 20 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 20 }),
+        "running",
+      );
       expect(result.layers).toContain("Thermal base layer");
       expect(result.layers).toContain("Running tights");
     });
 
     it("returns cold layers for 32 <= temp < 50", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 40 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 40 }),
+        "running",
+      );
       expect(result.layers).toContain("Long-sleeve moisture-wicking top");
       expect(result.layers).toContain("Running tights");
     });
 
     it("returns cool layers for 50 <= temp < 65", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 55 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 55 }),
+        "running",
+      );
       expect(result.layers).toContain("Long-sleeve tech tee");
       expect(result.notes).toContain("Optional light layer depending on wind");
     });
 
     it("returns mild layers for 65 <= temp <= 75", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 70 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 70 }),
+        "running",
+      );
       expect(result.layers).toContain("Short-sleeve tech tee");
       expect(result.layers).toContain("Shorts");
     });
 
     it("returns warm layers for temp > 75", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 80 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 80 }),
+        "running",
+      );
       expect(result.layers).toContain("Shorts");
       expect(result.layers).toContain("Sunscreen / sun protection");
     });
 
     it("uses 32 as the boundary: temp=31 is arctic, temp=32 is cold", () => {
-      const arctic = getLayerRecommendation(makeWeather({ temp: 31 }), "running");
+      const arctic = getLayerRecommendation(
+        makeWeather({ temp: 31 }),
+        "running",
+      );
       const cold = getLayerRecommendation(makeWeather({ temp: 32 }), "running");
       expect(arctic.layers).toContain("Thermal base layer");
       expect(cold.layers).toContain("Long-sleeve moisture-wicking top");
@@ -82,17 +102,26 @@ describe("getLayerRecommendation", () => {
 
   describe("activity differences", () => {
     it("returns running layers for running", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 40 }), "running");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 40 }),
+        "running",
+      );
       expect(result.layers).toContain("Running tights");
     });
 
     it("returns cycling layers for cycling", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 40 }), "cycling");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 40 }),
+        "cycling",
+      );
       expect(result.layers).toContain("Bib tights");
     });
 
     it("cycling cool adds gloves note", () => {
-      const result = getLayerRecommendation(makeWeather({ temp: 55 }), "cycling");
+      const result = getLayerRecommendation(
+        makeWeather({ temp: 55 }),
+        "cycling",
+      );
       expect(result.notes).toContain("Light gloves optional");
     });
   });
@@ -151,7 +180,9 @@ describe("getLayerRecommendation", () => {
         "running",
       );
       expect(result.layers).toContain("Waterproof/rain jacket");
-      expect(result.notes).toContain("Rain jacket added for current precipitation");
+      expect(result.notes).toContain(
+        "Rain jacket added for current precipitation",
+      );
     });
 
     it("does not add rain jacket for precipitation when jacket already in layers (cold band)", () => {
@@ -215,11 +246,21 @@ describe("getWardrobeRecommendation", () => {
 
     it("passes precipitation flag to generic fallback", () => {
       const result = getWardrobeRecommendation(
-        makeConditions({ worstTemp: 60, worstFeelsLike: 58, hasPrecipitation: true }),
+        makeConditions({
+          worstTemp: 60,
+          worstFeelsLike: 58,
+          hasPrecipitation: true,
+        }),
         [],
         "running",
       );
-      expect(result.layers.some((l) => l.name.toLowerCase().includes("rain") || l.name.toLowerCase().includes("jacket"))).toBe(true);
+      expect(
+        result.layers.some(
+          (l) =>
+            l.name.toLowerCase().includes("rain") ||
+            l.name.toLowerCase().includes("jacket"),
+        ),
+      ).toBe(true);
     });
   });
 
@@ -281,8 +322,18 @@ describe("getWardrobeRecommendation", () => {
     });
 
     it("selects item with midpoint closest to worstFeelsLike", () => {
-      const farItem = makeItem({ id: "1", name: "Far", minTemp: 20, maxTemp: 40 });
-      const closeItem = makeItem({ id: "2", name: "Close", minTemp: 45, maxTemp: 65 });
+      const farItem = makeItem({
+        id: "1",
+        name: "Far",
+        minTemp: 20,
+        maxTemp: 40,
+      });
+      const closeItem = makeItem({
+        id: "2",
+        name: "Close",
+        minTemp: 45,
+        maxTemp: 65,
+      });
       const result = getWardrobeRecommendation(
         makeConditions({ worstFeelsLike: 55 }),
         [farItem, closeItem],

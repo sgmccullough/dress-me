@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { applyLapseRate, sampleWaypoints, computeWorstCase } from "./routePlanning";
+import {
+  applyLapseRate,
+  sampleWaypoints,
+  computeWorstCase,
+} from "./routePlanning";
 import type { WaypointForecast } from "./types";
 
 function makeWeather(overrides = {}) {
@@ -166,9 +170,27 @@ describe("computeWorstCase", () => {
 
   it("tracks the worst (coldest) feelsLike across waypoints", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 0, weather: makeWeather({ feelsLike: 55 }) },
-      { lat: 41, lon: -74, estimatedArrivalUnix: 100, elevationFt: 0, weather: makeWeather({ feelsLike: 40 }) },
-      { lat: 42, lon: -74, estimatedArrivalUnix: 200, elevationFt: 0, weather: makeWeather({ feelsLike: 50 }) },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 0,
+        weather: makeWeather({ feelsLike: 55 }),
+      },
+      {
+        lat: 41,
+        lon: -74,
+        estimatedArrivalUnix: 100,
+        elevationFt: 0,
+        weather: makeWeather({ feelsLike: 40 }),
+      },
+      {
+        lat: 42,
+        lon: -74,
+        estimatedArrivalUnix: 200,
+        elevationFt: 0,
+        weather: makeWeather({ feelsLike: 50 }),
+      },
     ];
     const result = computeWorstCase(waypoints, 0);
     expect(result.worstFeelsLike).toBe(40);
@@ -176,9 +198,27 @@ describe("computeWorstCase", () => {
 
   it("tracks the max wind speed", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 0, weather: makeWeather({ windSpeed: 5 }) },
-      { lat: 41, lon: -74, estimatedArrivalUnix: 100, elevationFt: 0, weather: makeWeather({ windSpeed: 25 }) },
-      { lat: 42, lon: -74, estimatedArrivalUnix: 200, elevationFt: 0, weather: makeWeather({ windSpeed: 10 }) },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 0,
+        weather: makeWeather({ windSpeed: 5 }),
+      },
+      {
+        lat: 41,
+        lon: -74,
+        estimatedArrivalUnix: 100,
+        elevationFt: 0,
+        weather: makeWeather({ windSpeed: 25 }),
+      },
+      {
+        lat: 42,
+        lon: -74,
+        estimatedArrivalUnix: 200,
+        elevationFt: 0,
+        weather: makeWeather({ windSpeed: 10 }),
+      },
     ];
     const result = computeWorstCase(waypoints, 0);
     expect(result.maxWindSpeed).toBe(25);
@@ -186,7 +226,13 @@ describe("computeWorstCase", () => {
 
   it("sets hasPrecipitation when conditionId is in 200-622 range", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 0, weather: makeWeather({ conditionId: 500 }) },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 0,
+        weather: makeWeather({ conditionId: 500 }),
+      },
     ];
     const result = computeWorstCase(waypoints, 0);
     expect(result.hasPrecipitation).toBe(true);
@@ -194,7 +240,13 @@ describe("computeWorstCase", () => {
 
   it("does not set hasPrecipitation for conditionId 800 (clear)", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 0, weather: makeWeather({ conditionId: 800 }) },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 0,
+        weather: makeWeather({ conditionId: 800 }),
+      },
     ];
     const result = computeWorstCase(waypoints, 0);
     expect(result.hasPrecipitation).toBe(false);
@@ -202,8 +254,20 @@ describe("computeWorstCase", () => {
 
   it("sets hasPrecipitation if any waypoint has precipitation", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 0, weather: makeWeather({ conditionId: 800 }) },
-      { lat: 41, lon: -74, estimatedArrivalUnix: 100, elevationFt: 0, weather: makeWeather({ conditionId: 501 }) },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 0,
+        weather: makeWeather({ conditionId: 800 }),
+      },
+      {
+        lat: 41,
+        lon: -74,
+        estimatedArrivalUnix: 100,
+        elevationFt: 0,
+        weather: makeWeather({ conditionId: 501 }),
+      },
     ];
     const result = computeWorstCase(waypoints, 0);
     expect(result.hasPrecipitation).toBe(true);
@@ -211,9 +275,27 @@ describe("computeWorstCase", () => {
 
   it("computes maxElevationGain relative to startElevationFt", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 100, weather: makeWeather() },
-      { lat: 41, lon: -74, estimatedArrivalUnix: 100, elevationFt: 2000, weather: makeWeather() },
-      { lat: 42, lon: -74, estimatedArrivalUnix: 200, elevationFt: 500, weather: makeWeather() },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 100,
+        weather: makeWeather(),
+      },
+      {
+        lat: 41,
+        lon: -74,
+        estimatedArrivalUnix: 100,
+        elevationFt: 2000,
+        weather: makeWeather(),
+      },
+      {
+        lat: 42,
+        lon: -74,
+        estimatedArrivalUnix: 200,
+        elevationFt: 500,
+        weather: makeWeather(),
+      },
     ];
     const result = computeWorstCase(waypoints, 100);
     expect(result.maxElevationGain).toBe(1900);
@@ -221,7 +303,13 @@ describe("computeWorstCase", () => {
 
   it("does not count negative elevation as gain", () => {
     const waypoints: WaypointForecast[] = [
-      { lat: 40, lon: -74, estimatedArrivalUnix: 0, elevationFt: 500, weather: makeWeather() },
+      {
+        lat: 40,
+        lon: -74,
+        estimatedArrivalUnix: 0,
+        elevationFt: 500,
+        weather: makeWeather(),
+      },
     ];
     const result = computeWorstCase(waypoints, 1000);
     expect(result.maxElevationGain).toBe(0);

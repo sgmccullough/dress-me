@@ -85,7 +85,13 @@ describe("POST /api/wardrobe", () => {
 
   it("returns 401 when not authenticated", async () => {
     mockAuth.mockResolvedValue(null);
-    const res = await POST(makePostRequest({ name: "Top", type: "BASE_LAYER", activities: ["running"] }));
+    const res = await POST(
+      makePostRequest({
+        name: "Top",
+        type: "BASE_LAYER",
+        activities: ["running"],
+      }),
+    );
     expect(res.status).toBe(401);
   });
 
@@ -100,7 +106,11 @@ describe("POST /api/wardrobe", () => {
   it("returns 400 for invalid type", async () => {
     mockAuth.mockResolvedValue(AUTHED_SESSION);
     const res = await POST(
-      makePostRequest({ name: "Top", type: "INVALID_TYPE", activities: ["running"] }),
+      makePostRequest({
+        name: "Top",
+        type: "INVALID_TYPE",
+        activities: ["running"],
+      }),
     );
     expect(res.status).toBe(400);
   });
@@ -116,7 +126,11 @@ describe("POST /api/wardrobe", () => {
   it("returns 400 for invalid activity value", async () => {
     mockAuth.mockResolvedValue(AUTHED_SESSION);
     const res = await POST(
-      makePostRequest({ name: "Top", type: "BASE_LAYER", activities: ["swimming"] }),
+      makePostRequest({
+        name: "Top",
+        type: "BASE_LAYER",
+        activities: ["swimming"],
+      }),
     );
     expect(res.status).toBe(400);
   });
@@ -124,7 +138,11 @@ describe("POST /api/wardrobe", () => {
   it("returns 400 when activities is not an array", async () => {
     mockAuth.mockResolvedValue(AUTHED_SESSION);
     const res = await POST(
-      makePostRequest({ name: "Top", type: "BASE_LAYER", activities: "running" }),
+      makePostRequest({
+        name: "Top",
+        type: "BASE_LAYER",
+        activities: "running",
+      }),
     );
     expect(res.status).toBe(400);
   });

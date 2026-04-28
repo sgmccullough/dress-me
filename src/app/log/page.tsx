@@ -32,8 +32,14 @@ export default function LogPage() {
   useEffect(() => {
     Promise.all([
       fetch("/api/strava/activities").then(async (r) => {
-        if (r.status === 401) { setStravaError("not_connected"); return []; }
-        if (!r.ok) { setStravaError("Failed to load Strava activities"); return []; }
+        if (r.status === 401) {
+          setStravaError("not_connected");
+          return [];
+        }
+        if (!r.ok) {
+          setStravaError("Failed to load Strava activities");
+          return [];
+        }
         return r.json();
       }),
       fetch("/api/activity-logs").then((r) => (r.ok ? r.json() : [])),
@@ -93,11 +99,21 @@ export default function LogPage() {
     if (res.ok) {
       const updated: ActivityLog = await res.json();
       setLogs((prev) => {
-        const without = prev.filter((l) => l.stravaActivityId !== String(activity.id));
+        const without = prev.filter(
+          (l) => l.stravaActivityId !== String(activity.id),
+        );
         return [updated, ...without];
       });
       setSaved((prev) => new Set([...prev, activity.id]));
-      setTimeout(() => setSaved((prev) => { const s = new Set(prev); s.delete(activity.id); return s; }), 2000);
+      setTimeout(
+        () =>
+          setSaved((prev) => {
+            const s = new Set(prev);
+            s.delete(activity.id);
+            return s;
+          }),
+        2000,
+      );
     }
 
     setSaving(null);
@@ -115,7 +131,9 @@ export default function LogPage() {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-600 mb-4">Connect Strava to log what you wore on past rides.</p>
+          <p className="text-gray-600 mb-4">
+            Connect Strava to log what you wore on past rides.
+          </p>
           <a
             href="/api/auth/signin"
             className="inline-block px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
@@ -135,7 +153,9 @@ export default function LogPage() {
         {stravaError && <p className="text-sm text-red-500">{stravaError}</p>}
 
         {activities.length === 0 && !stravaError && (
-          <p className="text-sm text-gray-400">No recent Strava activities found.</p>
+          <p className="text-sm text-gray-400">
+            No recent Strava activities found.
+          </p>
         )}
 
         {wardrobe.length === 0 && activities.length > 0 && (
@@ -162,10 +182,14 @@ export default function LogPage() {
                   className="w-full p-4 flex items-start justify-between gap-2 text-left"
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.name}</p>
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {activity.name}
+                    </p>
                     <p className="text-xs text-gray-400 mt-0.5">
                       {formatDate(activity.start_date)}
-                      {activity.distance > 0 ? ` · ${formatDistance(activity.distance)}` : ""}
+                      {activity.distance > 0
+                        ? ` · ${formatDistance(activity.distance)}`
+                        : ""}
                       {activity.sport_type ? ` · ${activity.sport_type}` : ""}
                     </p>
                   </div>
@@ -175,14 +199,18 @@ export default function LogPage() {
                         {existingLog.items.length} items
                       </span>
                     )}
-                    <span className="text-xs text-gray-400">{isExpanded ? "▲" : "▼"}</span>
+                    <span className="text-xs text-gray-400">
+                      {isExpanded ? "▲" : "▼"}
+                    </span>
                   </div>
                 </button>
 
                 {isExpanded && (
                   <div className="px-4 pb-4 flex flex-col gap-3 border-t border-gray-50 pt-3">
                     {wardrobe.length === 0 ? (
-                      <p className="text-xs text-gray-400">No wardrobe items yet.</p>
+                      <p className="text-xs text-gray-400">
+                        No wardrobe items yet.
+                      </p>
                     ) : (
                       <div className="flex flex-col gap-2">
                         {wardrobe.map((item) => (
@@ -196,7 +224,9 @@ export default function LogPage() {
                               onChange={() => toggleItem(activity.id, item.id)}
                               className="rounded"
                             />
-                            <span className="text-sm text-gray-700">{item.name}</span>
+                            <span className="text-sm text-gray-700">
+                              {item.name}
+                            </span>
                           </label>
                         ))}
                       </div>
