@@ -31,13 +31,32 @@ jobs:
       - run: npm ci
       - run: npm run format:check
 
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./prisma/dev.db
+      AUTH_SECRET: ci-placeholder
+      AUTH_STRAVA_ID: placeholder
+      AUTH_STRAVA_SECRET: placeholder
+      OPENWEATHERMAP_API_KEY: placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run build
+
   security:
     name: Security (Trivy)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: .
