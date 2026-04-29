@@ -112,7 +112,8 @@ export default function Home() {
       worstTemp: weather.temp,
       worstFeelsLike: weather.feelsLike,
       maxWindSpeed: weather.windSpeed,
-      hasPrecipitation: weather.conditionId >= 200 && weather.conditionId <= 622,
+      hasPrecipitation:
+        weather.conditionId >= 200 && weather.conditionId <= 622,
       maxElevationGain: 0,
     };
     return getWardrobeRecommendation(conditions, wardrobe, activity);

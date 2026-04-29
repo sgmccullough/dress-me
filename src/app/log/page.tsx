@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ActivityLog, ClothingItem, StravaActivity } from "@/lib/types";
+import { connectStrava } from "./actions";
 
 const METERS_TO_MILES = 0.000621371;
 
@@ -134,12 +135,14 @@ export default function LogPage() {
           <p className="text-gray-600 mb-4">
             Connect Strava to log what you wore on past rides.
           </p>
-          <a
-            href="/api/auth/signin"
-            className="inline-block px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
-          >
-            Connect Strava
-          </a>
+          <form action={connectStrava}>
+            <button
+              type="submit"
+              className="inline-block px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Connect Strava
+            </button>
+          </form>
         </div>
       </main>
     );

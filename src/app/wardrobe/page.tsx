@@ -344,7 +344,9 @@ export default function WardrobePage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500">Notes (optional)</label>
+                <label className="text-xs text-gray-500">
+                  Notes (optional)
+                </label>
                 <textarea
                   value={form.notes}
                   onChange={(e) =>

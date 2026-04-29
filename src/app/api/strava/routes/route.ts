@@ -22,5 +22,7 @@ export async function GET() {
   // JSON.parse loses precision for these; quote them as strings before parsing.
   const text = await res.text();
   const safe = text.replace(/"id":(\d{16,})/g, '"id":"$1"');
-  return new Response(safe, { headers: { "Content-Type": "application/json" } });
+  return new Response(safe, {
+    headers: { "Content-Type": "application/json" },
+  });
 }
