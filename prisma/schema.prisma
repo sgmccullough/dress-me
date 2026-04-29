@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  wardrobeItems ClothingItem[]
+  activityLogs  ActivityLog[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model ClothingItem {
+  id               String            @id @default(cuid())
+  userId           String
+  name             String
+  type             String
+  activities       String
+  minTemp          Float
+  maxTemp          Float
+  isWindproof      Boolean           @default(false)
+  isWaterproof     Boolean           @default(false)
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityLogItems ActivityLogItem[]
+}
+
+model ActivityLog {
+  id               String            @id @default(cuid())
+  userId           String
+  stravaActivityId String
+  activityName     String
+  activityDate     DateTime
+  temperature      Float?
+  feelsLike        Float?
+  windSpeed        Float?
+  items            ActivityLogItem[]
+  createdAt        DateTime          @default(now())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stravaActivityId])
+}
+
+model ActivityLogItem {
+  id             String      @id @default(cuid())
+  activityLogId  String
+  clothingItemId String
+  activityLog    ActivityLog @relation(fields: [activityLogId], references: [id], onDelete: Cascade)
+  clothingItem   ClothingItem @relation(fields: [clothingItemId], references: [id], onDelete: Cascade)
+
+  @@unique([activityLogId, clothingItemId])
+}
